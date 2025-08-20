@@ -54,8 +54,16 @@ Widget::Widget(QWidget *parent)
             ui->buttonSelect->setText("更换模型");
         }
     });
+    connect(ui->radioButton_2, &QRadioButton::toggled, ui->comboBox, &QComboBox::setEnabled);
+
+    QStringList cpuMultiThreadNums;
+    cpuMultiThreadNums << "8线程" << "12线程" << "16线程" << "20线程" << "32线程";
 
     ui->pushButton->setDefault(true);
+    ui->radioButton->setAutoExclusive(false);
+    ui->radioButton_2->setAutoExclusive(false);
+    ui->comboBox->setDisabled(true);
+    ui->comboBox->addItems(cpuMultiThreadNums);
 }
 
 
@@ -185,7 +193,7 @@ void Widget::on_buttonSelect_clicked()
     layout->addWidget(progressBar);
     msgDialog->show();
 
-    QString program = QCoreApplication::applicationDirPath() + "/llama-server.exe";
+    QString program = QCoreApplication::applicationDirPath() + "/llama_server/llama-server.exe";
     QStringList arguments;
     arguments << "-m" << filePath
               << "--jinja"
@@ -200,7 +208,25 @@ void Widget::on_buttonSelect_clicked()
               << "-c" << "40960"
               << "-n" << "32768"
               << "--no-context-shift";
-
+    if(ui->radioButton_2->isChecked())
+    {
+        qint32 threadsNum;
+        qDebug()<<"currentIndex"<<ui->comboBox->currentIndex();
+        switch(ui->comboBox->currentIndex())
+        {
+        case 0: arguments << "-t" << "8";
+            break;
+        case 1: arguments << "-t" << "12";
+            break;
+        case 2: arguments << "-t" << "16";
+            break;
+        case 3: arguments << "-t" << "20";
+            break;
+        case 4: arguments << "-t" << "32";
+            break;
+        default: threadsNum = 1;
+        }
+    }
     process->start(program, arguments);
     qDebug() << "Start command:" << program << arguments;
 }
