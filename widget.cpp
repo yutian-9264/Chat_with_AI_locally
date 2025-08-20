@@ -65,6 +65,15 @@ Widget::~Widget()
 
     newThread->quit();
     newThread->wait();
+    if(process->state() == QProcess::Running)
+    {
+        process->terminate();
+        if(!process->waitForFinished(1000))
+        {
+            process->kill();
+            process->waitForFinished();
+        }
+    }
 }
 
 
