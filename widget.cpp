@@ -51,7 +51,7 @@ Widget::Widget(QWidget *parent)
             qDebug() << "llama服务器已连接成功！";
             msgDialog->accept();
             ui->label->setText("当前模型：" + modelFileName);
-            ui->pushButton_2->setText("更换模型");
+            ui->buttonSelect->setText("更换模型");
         }
     });
 
@@ -139,18 +139,19 @@ void Widget::keyPressEvent(QKeyEvent *event) {
 }
 
 
-void Widget::on_pushButton_2_clicked()
+void Widget::on_buttonSelect_clicked()
 {
     QString filePath = QFileDialog::getOpenFileName(
                 this,
                 "选择模型",
                 "../",
                 "模型文件(*.gguf)");
-    if(!filePath.isEmpty())
+    if(filePath.isEmpty())
     {
+        return;
+    }else{
         QFileInfo fileInfo(filePath);
         modelFileName = fileInfo.completeBaseName();
-        qDebug()<<"00000"<<fileInfo<<modelFileName;
     }
 
     msgDialog = new QDialog (this);

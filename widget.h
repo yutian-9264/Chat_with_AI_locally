@@ -24,7 +24,7 @@ public:
 private slots:
     void on_pushButton_clicked();
     void receiveTextFromThread(QString str, bool isReasoning);
-    void on_pushButton_2_clicked();
+    void on_buttonSelect_clicked();
 
 protected:
     void keyPressEvent(QKeyEvent *event) override; // 重写键盘事件函数
