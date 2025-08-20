@@ -2,7 +2,6 @@
 #include "ui_widget.h"
 #include <QDebug>
 #include <QProcess>
-
 #include <QCoreApplication>
 #include <QNetworkAccessManager>
 #include <QNetworkRequest>
@@ -16,6 +15,7 @@
 #include <QVBoxLayout>
 #include <QLabel>
 #include <QProgressBar>
+#include <QFileInfo>
 
 Widget::Widget(QWidget *parent)
     : QWidget(parent)
@@ -50,6 +50,8 @@ Widget::Widget(QWidget *parent)
         {
             qDebug() << "llama服务器已连接成功！";
             msgDialog->accept();
+            ui->label->setText("当前模型：" + modelFileName);
+            ui->pushButton_2->setText("更换模型");
         }
     });
 
@@ -144,13 +146,19 @@ void Widget::on_pushButton_2_clicked()
                 "选择模型",
                 "../",
                 "模型文件(*.gguf)");
+    if(!filePath.isEmpty())
+    {
+        QFileInfo fileInfo(filePath);
+        modelFileName = fileInfo.completeBaseName();
+        qDebug()<<"00000"<<fileInfo<<modelFileName;
+    }
+
     msgDialog = new QDialog (this);
     msgDialog->setWindowTitle("提示");
     msgDialog->setModal(true);
     QVBoxLayout* layout = new QVBoxLayout(msgDialog);
     QLabel* label = new QLabel("模型加载中...", msgDialog);
     layout->addWidget(label);
-
     QProgressBar *progressBar = new QProgressBar(msgDialog);
     progressBar->setRange(0, 0);
     layout->addWidget(progressBar);

@@ -37,5 +37,6 @@ private:
     bool newAnswer;
     QProcess* process;
     QDialog* msgDialog;
+    QString modelFileName;
 };
 #endif // WIDGET_H
