@@ -12,6 +12,10 @@
 #include <QUrl>
 #include <QDebug>
 #include <QTextCursor>
+#include <QFileDialog>
+#include <QVBoxLayout>
+#include <QLabel>
+#include <QProgressBar>
 
 Widget::Widget(QWidget *parent)
     : QWidget(parent)
@@ -22,25 +26,36 @@ Widget::Widget(QWidget *parent)
 
     ui->setupUi(this);
     this->setWindowTitle("本地离线AI聊天工具");
-//    ui->comboBox->addItem("DeepSeek-R1-Distill-Qwen-1.5B-UD-IQ2_M");
+    //    ui->comboBox->addItem("DeepSeek-R1-Distill-Qwen-1.5B-UD-IQ2_M");
 
     newThread = new QThread(this);
     worker = new Worker();
     worker->moveToThread(newThread);
-
     newThread->start();
+    process = new QProcess(this);
 
-//    connect(newThread, &QThread::started, worker, &Worker::sendPromptToServer);
     connect(newThread, &QThread::destroyed, newThread, &QThread::deleteLater);
     connect(newThread, &QThread::destroyed, worker, &QThread::deleteLater);
-
-    connect(worker, &Worker::receiveText, this, &Widget::receiveTextFromThread);  
+    connect(worker, &Worker::receiveText, this, &Widget::receiveTextFromThread);
     connect(worker, &Worker::streamFinished, [=](){
         ui->pushButton->setDisabled(false);
+    });
+    connect(process, &QProcess::readyReadStandardError,  [=]()
+    {
+        QByteArray output = process->readAllStandardError();
+        QString text = QString::fromUtf8(output);
+        qDebug() << "Server Output:" << text;
+
+        if (text.contains("listening on"))
+        {
+            qDebug() << "llama服务器已连接成功！";
+            msgDialog->accept();
+        }
     });
 
     ui->pushButton->setDefault(true);
 }
+
 
 Widget::~Widget()
 {
@@ -49,8 +64,6 @@ Widget::~Widget()
     newThread->quit();
     newThread->wait();
 }
-
-
 
 
 void Widget::on_pushButton_clicked()
@@ -65,7 +78,6 @@ void Widget::on_pushButton_clicked()
 
     cursor.insertText("\n\n\n\n", userCharFormat);
     cursor.insertText(ui->lineEdit->text(), userCharFormat);
-
 
     newReasoning = 1;
     newAnswer = 1;
@@ -83,6 +95,7 @@ void Widget::on_pushButton_clicked()
     ui->lineEdit->clear();
 }
 
+
 void Widget::receiveTextFromThread(QString str, bool isReasoning)
 {
     QTextCursor cursor = ui->textBrowser->textCursor();
@@ -93,10 +106,6 @@ void Widget::receiveTextFromThread(QString str, bool isReasoning)
 
     QTextBlockFormat leftFormat;
     leftFormat.setAlignment(Qt::AlignLeft);
-//    cursor.insertBlock(leftFormat);
-
-
-
 
     if(isReasoning)
     {
@@ -111,6 +120,7 @@ void Widget::receiveTextFromThread(QString str, bool isReasoning)
         if(newAnswer)
         {
             cursor.insertBlock(leftFormat);
+            cursor.insertText("\n", formatText);
             newAnswer = 0;
         }
         cursor.insertText(str, formatText);
@@ -126,3 +136,42 @@ void Widget::keyPressEvent(QKeyEvent *event) {
     }
 }
 
+
+void Widget::on_pushButton_2_clicked()
+{
+    QString filePath = QFileDialog::getOpenFileName(
+                this,
+                "选择模型",
+                "../",
+                "模型文件(*.gguf)");
+    msgDialog = new QDialog (this);
+    msgDialog->setWindowTitle("提示");
+    msgDialog->setModal(true);
+    QVBoxLayout* layout = new QVBoxLayout(msgDialog);
+    QLabel* label = new QLabel("模型加载中...", msgDialog);
+    layout->addWidget(label);
+
+    QProgressBar *progressBar = new QProgressBar(msgDialog);
+    progressBar->setRange(0, 0);
+    layout->addWidget(progressBar);
+    msgDialog->show();
+
+    QString program = QCoreApplication::applicationDirPath() + "/llama-server.exe";
+    QStringList arguments;
+    arguments << "-m" << filePath
+              << "--jinja"
+              << "--reasoning-format" << "deepseek"
+              << "-ngl" << "99"
+              << "-fa"
+              << "-sm" << "row"
+              << "--temp" << "0.6"
+              << "--top-k" << "20"
+              << "--top-p" << "0.95"
+              << "--min-p" << "0"
+              << "-c" << "40960"
+              << "-n" << "32768"
+              << "--no-context-shift";
+
+    process->start(program, arguments);
+    qDebug() << "Start command:" << program << arguments;
+}
