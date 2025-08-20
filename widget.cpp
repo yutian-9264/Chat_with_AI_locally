@@ -22,7 +22,7 @@ Widget::Widget(QWidget *parent)
 
     ui->setupUi(this);
     this->setWindowTitle("本地离线AI聊天工具");
-    ui->comboBox->addItem("DeepSeek-R1-Distill-Qwen-1.5B-UD-IQ2_M");
+//    ui->comboBox->addItem("DeepSeek-R1-Distill-Qwen-1.5B-UD-IQ2_M");
 
     newThread = new QThread(this);
     worker = new Worker();
@@ -63,14 +63,22 @@ void Widget::on_pushButton_clicked()
     QTextCharFormat userCharFormat;
     userCharFormat.setForeground(Qt::blue);
 
+    cursor.insertText("\n\n\n\n", userCharFormat);
     cursor.insertText(ui->lineEdit->text(), userCharFormat);
 
 
     newReasoning = 1;
     newAnswer = 1;
+    QString sendMsg;
+    if(ui->radioButton->isChecked())
+    {
+        sendMsg = ui->lineEdit->text();
+    }else{
+        sendMsg = ui->lineEdit->text() + " /no_think";
+    }
     if(worker)
     {
-        worker->sendPromptToServer(ui->lineEdit->text());
+        worker->sendPromptToServer(sendMsg);
     }
     ui->lineEdit->clear();
 }
@@ -114,7 +122,7 @@ void Widget::keyPressEvent(QKeyEvent *event) {
     if (event->key() == Qt::Key_Return || event->key() == Qt::Key_Enter) {
         ui->pushButton->click(); // 触发按钮点击
     } else {
-        Widget::keyPressEvent(event); // 其他按键默认处理
+        QWidget::keyPressEvent(event); // 其他按键默认处理
     }
 }
 

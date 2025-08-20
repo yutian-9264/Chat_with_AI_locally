@@ -50,6 +50,10 @@ void Worker::sendPromptToServer(const QString& promt)
 
     QByteArray postData = QJsonDocument(jsonPayload).toJson();
     QNetworkReply* reply = manager->post(request, postData);
+    connect(reply, &QNetworkReply::finished, [reply]() {
+        // 删除对象
+        reply->deleteLater();
+    });
     connect(reply, &QNetworkReply::readyRead,[=](){
         QByteArray chunk = reply->readAll();
         qDebug() << chunk;
@@ -59,7 +63,6 @@ void Worker::sendPromptToServer(const QString& promt)
             QList<QByteArray> lines = chunk.split('\n');
             for(const QByteArray& line : lines)
             {
-//                qDebug()<<"2"<<line;
                 if(line.startsWith("data: "))
                 {
                     QString dataStr = QString::fromUtf8(line.mid(6)).trimmed();
@@ -75,17 +78,6 @@ void Worker::sendPromptToServer(const QString& promt)
                     if(err.error == QJsonParseError::NoError && jsonDoc.isObject()) {
                         QJsonObject obj = jsonDoc.object();
 
-
-                        if(obj.contains("reasoning_content"))
-                        {
-                            QString textReasoning = obj["reasoning_content"].toString();
-                            if(!textReasoning.isEmpty())
-                            {
-                                qDebug() << "[reasoning]" <<textReasoning;
-                                receiveText(textReasoning, true);
-                            }
-                        }
-
                         if(obj.contains("choices"))
                         {
                             QJsonArray choices = obj["choices"].toArray();
@@ -98,7 +90,7 @@ void Worker::sendPromptToServer(const QString& promt)
                                     QString textReasoning = delta["reasoning_content"].toString();
                                     if(!textReasoning.isEmpty())
                                     {
-                                        qDebug() << "[reasoning]" <<textReasoning;
+//                                        qDebug() << "[reasoning]" <<textReasoning;
                                         receiveText(textReasoning, true);
                                     }
                                 }
@@ -108,7 +100,7 @@ void Worker::sendPromptToServer(const QString& promt)
                                     QString text = delta["content"].toString();
                                     if(!text.isEmpty())
                                     {
-                                        qDebug() << "[content]"<< text;
+//                                        qDebug() << "[content]"<< text;
                                         receiveText(text, false);
                                     }
                                 }
