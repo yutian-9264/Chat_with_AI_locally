@@ -141,15 +141,26 @@ void Widget::receiveTextFromThread(QString str, bool isReasoning)
 
 void Widget::keyPressEvent(QKeyEvent *event) {
     if (event->key() == Qt::Key_Return || event->key() == Qt::Key_Enter) {
-        ui->pushButton->click(); // 触发按钮点击
+        ui->pushButton->click();
     } else {
-        QWidget::keyPressEvent(event); // 其他按键默认处理
+        QWidget::keyPressEvent(event);
     }
 }
 
 
 void Widget::on_buttonSelect_clicked()
 {
+    if(ui->buttonSelect->text() == "更换模型")
+    {
+        if (process->state() == QProcess::Running) {
+            process->terminate();
+            if (!process->waitForFinished(1000)) {
+                process->kill();
+                process->waitForFinished();
+            }
+        }
+    }
+
     QString filePath = QFileDialog::getOpenFileName(
                 this,
                 "选择模型",
