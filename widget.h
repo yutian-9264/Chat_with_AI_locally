@@ -4,6 +4,7 @@
 #include <QWidget>
 #include <QThread>
 #include "worker.h"
+#include <QKeyEvent>
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class Widget; }
@@ -19,11 +20,15 @@ public:
 
 private slots:
     void on_pushButton_clicked();
-
+    void receiveTextFromThread(QString str, bool isReasoning);
+protected:
+    void keyPressEvent(QKeyEvent *event) override; // 重写键盘事件函数
 private:
     Ui::Widget *ui;
 
     QThread* newThread;
     Worker* worker;
+    bool newReasoning;
+    bool newAnswer;
 };
 #endif // WIDGET_H

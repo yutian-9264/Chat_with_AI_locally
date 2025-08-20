@@ -11,7 +11,8 @@ public:
     void sendPromptToServer(const QString& promt);
 
 signals:
-
+    void receiveText(QString str, bool isReasoning);
+    void streamFinished();
 };
 
 #endif // WORKER_H
