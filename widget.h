@@ -8,6 +8,9 @@
 #include <QProcess>
 #include <QMessageBox>
 #include <QDialog>
+#include <QSqlDatabase>
+#include <QSqlError>
+#include <QSqlQuery>
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class Widget; }
@@ -38,5 +41,7 @@ private:
     QProcess* process;
     QDialog* msgDialog;
     QString modelFileName;
+    QSqlDatabase database;
+
 };
 #endif // WIDGET_H

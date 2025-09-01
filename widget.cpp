@@ -17,6 +17,7 @@
 #include <QProgressBar>
 #include <QFileInfo>
 
+
 Widget::Widget(QWidget *parent)
     : QWidget(parent)
     , ui(new Ui::Widget)
@@ -64,6 +65,21 @@ Widget::Widget(QWidget *parent)
     ui->radioButton_2->setAutoExclusive(false);
     ui->comboBox->setDisabled(true);
     ui->comboBox->addItems(cpuMultiThreadNums);
+
+    if (QSqlDatabase::contains("qt_sql_default_connection")) {
+        database = QSqlDatabase::database("qt_sql_default_connection");
+    }else{
+        database = QSqlDatabase::addDatabase("QSQLITE");
+        database.setDatabaseName("MyDataBase.db");
+        database.setUserName("yt");
+        database.setPassword("123");
+    }
+
+    if(!database.open()) {
+        qDebug() << "Error: failed to connect database." << database.lastError();
+    }else{
+        qDebug()<<"database connected";
+    }
 }
 
 
@@ -82,6 +98,8 @@ Widget::~Widget()
             process->waitForFinished();
         }
     }
+
+    database.close();
 }
 
 
