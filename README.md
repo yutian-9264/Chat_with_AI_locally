@@ -5,7 +5,7 @@
 - [x] 前端-页面搭建
 - [x] 后端-使用llama.server调用model进行对话
 - [x] 后端-支持多个model的选择
-- [ ] 系统-在linux（debian）下编译运行成功
+- [x] 系统-在linux（debian）下编译运行成功
 
 ### 待完成功能
 
