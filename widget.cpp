@@ -207,7 +207,7 @@ void Widget::on_buttonSelect_clicked()
               << "--min-p" << "0"
               << "-c" << "40960"
               << "-n" << "32768"
-              << "--no-context-shift    ";
+              << "--no-context-shift     ";
     if(ui->radioButton_2->isChecked())
     {
         qint32 threadsNum;
