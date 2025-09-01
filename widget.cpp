@@ -193,13 +193,13 @@ void Widget::on_buttonSelect_clicked()
     layout->addWidget(progressBar);
     msgDialog->show();
 
-    QString program = QCoreApplication::applicationDirPath() + "/llama_server/llama-server.exe";
+    QString program = QCoreApplication::applicationDirPath() + "/llama_server/llama-server";
     QStringList arguments;
     arguments << "-m" << filePath
               << "--jinja"
               << "--reasoning-format" << "deepseek"
               << "-ngl" << "99"
-              << "-fa"
+              << "-fa" << "auto"
               << "-sm" << "row"
               << "--temp" << "0.6"
               << "--top-k" << "20"
