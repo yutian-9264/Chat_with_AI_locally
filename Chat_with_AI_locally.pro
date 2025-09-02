@@ -12,12 +12,14 @@ SOURCES += \
     main.cpp \
     widget.cpp \
     worker.cpp \
-    register.cpp
+    register.cpp \
+    dbmanager.cpp
 
 HEADERS += \
     widget.h \
     worker.h \
-    register.h
+    register.h \
+    dbmanager.h
 
 FORMS += \
     widget.ui \
