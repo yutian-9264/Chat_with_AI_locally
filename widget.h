@@ -43,5 +43,6 @@ private:
     QString modelFileName;
     QSqlDatabase database;
 
+
 };
 #endif // WIDGET_H

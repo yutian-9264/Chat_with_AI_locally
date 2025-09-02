@@ -79,7 +79,18 @@ Widget::Widget(QWidget *parent)
         qDebug() << "Error: failed to connect database." << database.lastError();
     }else{
         qDebug()<<"database connected";
+
+        QSqlQuery sql_query(database);
+        QString create_sql = "create table student (id int primary key, name varchar(30), age int)";
+        sql_query.prepare(create_sql);
+        if(!sql_query.exec()) {
+            qDebug() << "Error: Fail to create table." << sql_query.lastError();
+        } else {
+            qDebug() << "Table created!";
+        }
     }
+
+
 }
 
 
