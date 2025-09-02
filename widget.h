@@ -11,6 +11,7 @@
 #include <QSqlDatabase>
 #include <QSqlError>
 #include <QSqlQuery>
+#include "register.h"
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class Widget; }
@@ -22,12 +23,14 @@ class Widget : public QWidget
 
 public:
     Widget(QWidget *parent = nullptr);
-    ~Widget();
+    ~Widget() override;
 
 private slots:
     void on_pushButton_clicked();
     void receiveTextFromThread(QString str, bool isReasoning);
     void on_buttonSelect_clicked();
+
+    void on_buttonSelect_2_clicked();
 
 protected:
     void keyPressEvent(QKeyEvent *event) override; // 重写键盘事件函数

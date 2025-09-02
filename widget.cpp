@@ -352,3 +352,9 @@ void Widget::on_buttonSelect_clicked()
     process->start(program, arguments);
     qDebug() << "Start command:" << program << arguments;
 }
+
+void Widget::on_buttonSelect_2_clicked()
+{
+    Register m_register(this);
+    int result = m_register.exec();
+}
