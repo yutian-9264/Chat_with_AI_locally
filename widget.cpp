@@ -89,22 +89,45 @@ Widget::Widget(QWidget *parent)
             qDebug() << "Table created!";
         }
 
-        QString insert_sql = "insert into student values (?, ?, ?)";
-        sql_query.prepare(insert_sql);
-        sql_query.addBindValue(1);
-        sql_query.addBindValue("wang");
-        sql_query.addBindValue(25);
+        QString update_sql = "update student set name = :name where id = :id";
+        sql_query.prepare(update_sql);
+        sql_query.bindValue(":name", "Qt");
+        sql_query.bindValue(":id", 1);
         if(!sql_query.exec()) {
             qDebug()<<sql_query.lastError();
         }else{
-            qDebug()<<"inserted wang!";
+            qDebug()<<"updated!";
         }
 
-        if(!sql_query.exec("INSERT INTO student VALUES(3, \"Li\", 23)")) {
+        QString select_sql = "select id, name from student";
+        if(!sql_query.exec(select_sql)) {
             qDebug() << sql_query.lastError();
-        }else{
-            qDebug() << "inserted Li!";
+        } else {
+            while(sql_query.next()) {
+                int id = sql_query.value(0).toInt();
+                QString name = sql_query.value(1).toString();
+                qDebug()<<QString("id:%1 name:%2").arg(id).arg(name);
+            }
         }
+
+//        QString insert_sql = "insert into student values (?, ?, ?)";
+//        sql_query.prepare(insert_sql);
+//        sql_query.addBindValue(1);
+//        sql_query.addBindValue("wang");
+//        sql_query.addBindValue(25);
+//        if(!sql_query.exec()) {
+//            qDebug()<<sql_query.lastError();
+//        }else{
+//            qDebug()<<"inserted wang!";
+//        }
+
+//        if(!sql_query.exec("INSERT INTO student VALUES(3, \"Li\", 23)")) {
+//            qDebug() << sql_query.lastError();
+//        }else{
+//            qDebug() << "inserted Li!";
+//        }
+
+
     }
 
 
