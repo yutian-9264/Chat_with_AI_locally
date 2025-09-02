@@ -88,6 +88,23 @@ Widget::Widget(QWidget *parent)
         } else {
             qDebug() << "Table created!";
         }
+
+        QString insert_sql = "insert into student values (?, ?, ?)";
+        sql_query.prepare(insert_sql);
+        sql_query.addBindValue(1);
+        sql_query.addBindValue("wang");
+        sql_query.addBindValue(25);
+        if(!sql_query.exec()) {
+            qDebug()<<sql_query.lastError();
+        }else{
+            qDebug()<<"inserted wang!";
+        }
+
+        if(!sql_query.exec("INSERT INTO student VALUES(3, \"Li\", 23)")) {
+            qDebug() << sql_query.lastError();
+        }else{
+            qDebug() << "inserted Li!";
+        }
     }
 
 
