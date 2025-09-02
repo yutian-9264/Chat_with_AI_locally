@@ -81,7 +81,7 @@ Widget::Widget(QWidget *parent)
         qDebug()<<"database connected";
 
         QSqlQuery sql_query(database);
-        QString create_sql = "create table student (id int primary key, name varchar(30), age int)";
+        QString create_sql = "CREATE TABLE IF NOT EXISTS student (id int primary key, name varchar(30), age int)";
         sql_query.prepare(create_sql);
         if(!sql_query.exec()) {
             qDebug() << "Error: Fail to create table." << sql_query.lastError();
