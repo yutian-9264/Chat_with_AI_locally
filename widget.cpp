@@ -357,4 +357,10 @@ void Widget::on_buttonSelect_2_clicked()
 {
     Register m_register(this);
     int result = m_register.exec();
+
+    if(result == QDialog::Accepted) {
+        qDebug () << "QDialog accepted!";
+    } else {
+        qDebug () << "QDialog rejected!";
+    }
 }
