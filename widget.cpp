@@ -110,6 +110,18 @@ Widget::Widget(QWidget *parent)
             }
         }
 
+        QString select_all_sql = "select * from student";
+        if(!sql_query.exec(select_all_sql)) {
+            qDebug() << sql_query.lastError();
+        } else {
+            while(sql_query.next()) {
+                int id = sql_query.value(0).toInt();
+                QString name = sql_query.value(1).toString();
+                int age = sql_query.value(2).toInt();
+                qDebug()<<QString("id:%1 name:%2 age:%3").arg(id).arg(name).arg(age);
+            }
+        }
+
 //        QString insert_sql = "insert into student values (?, ?, ?)";
 //        sql_query.prepare(insert_sql);
 //        sql_query.addBindValue(1);
