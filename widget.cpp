@@ -122,6 +122,17 @@ Widget::Widget(QWidget *parent)
             }
         }
 
+        QString select_max_sql = "select max(id) from student";
+        int max_id = 0;
+        if(!sql_query.exec(select_max_sql)) {
+            qDebug() << sql_query.lastError();
+        } else {
+            while(sql_query.next()) {
+                max_id = sql_query.value(0).toInt();
+                qDebug()<<QString("max id:%1").arg(max_id);
+            }
+        }
+
 //        QString insert_sql = "insert into student values (?, ?, ?)";
 //        sql_query.prepare(insert_sql);
 //        sql_query.addBindValue(1);
