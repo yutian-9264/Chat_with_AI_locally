@@ -133,6 +133,34 @@ Widget::Widget(QWidget *parent)
             }
         }
 
+//        QString delete_sql = "delete from student where id = ?";
+//        sql_query.prepare(delete_sql);
+//        sql_query.addBindValue(1);
+//        if(!sql_query.exec()) {
+//            qDebug() << sql_query.lastError();
+//        } else {
+//            qDebug() << "deleted!";
+//        }
+
+        QString clear_sql = "delete from student";
+        sql_query.prepare(clear_sql);
+        if(!sql_query.exec()) {
+            qDebug() << sql_query.lastError();
+        } else {
+            qDebug() << "table cleared!";
+        }
+
+        if(!sql_query.exec(select_all_sql)) {
+            qDebug() << sql_query.lastError();
+        } else {
+            while(sql_query.next()) {
+                int id = sql_query.value(0).toInt();
+                QString name = sql_query.value(1).toString();
+                int age = sql_query.value(2).toInt();
+                qDebug()<<QString("id:%1 name:%2 age:%3").arg(id).arg(name).arg(age);
+            }
+        }
+
 //        QString insert_sql = "insert into student values (?, ?, ?)";
 //        sql_query.prepare(insert_sql);
 //        sql_query.addBindValue(1);
